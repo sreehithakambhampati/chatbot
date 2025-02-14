@@ -3,6 +3,8 @@ const sendMsgButton = document.querySelector("#send-message")
 const chatBody = document.querySelector(".chat-body")
 const fileInput = document.querySelector("#file-input")
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper")
+const fileCancelButton = document.querySelector("#file-cancel")
+const chatBotToggler = document.querySelector("#chatbot-toggler")
 const userData ={
     message : null,
     file:{
@@ -11,17 +13,22 @@ const userData ={
     }
 
 };
-const API_KEY = "";
+const chatHistory = []
+const initialInputHeight = msgInput.scrollHeight
+const API_KEY = "AIzaSyAvUoiN5skRhYB4_wcmuQPmjVslVQ2W2ac";
 const API_url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 const generateBotResponse = async (inComingmsgDiv) =>{
     const msgElement = inComingmsgDiv.querySelector(".message-text")
+     //Adding user msg to chat history
+    chatHistory.push({ 
+        role:"user",
+        parts: [{ text: userData.message },...(userData.file.data ? [{inline_data : userData.file}]:[])] 
+   });
     const requestOptions = { 
         method: "POST", 
         headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify({ 
-        contents: [{ 
-             parts: [{ text: userData.message },...(userData.file.data ? [{inline_data : userData.file}]:[])] 
-        }] 
+        contents:chatHistory
         }) 
     }
     try{
@@ -31,6 +38,11 @@ const generateBotResponse = async (inComingmsgDiv) =>{
             throw new Error(data.err.message);
         const apiResponse = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
         msgElement.innerText = apiResponse
+        //Adding bot response to chat history
+        chatHistory.push({ 
+            role:"model",
+            parts: [{ text: apiResponse}] 
+       });
     }
     catch(error)
     {
@@ -48,6 +60,8 @@ const generateBotResponse = async (inComingmsgDiv) =>{
 const handleOutgoingMsg=(e)=>{
     e.preventDefault();
     userData.message = msgInput.value.trim();
+    fileUploadWrapper.classList.remove("file-uploaded")
+    msgInput.dispatchEvent(new Event("input"));
     //clearing the text area after msg is sent
     msgInput.value = "";
     const msgContent = ` 
@@ -90,11 +104,19 @@ const createMsgElement =(msgContent,...classes)=>{
 }
 msgInput.addEventListener("keydown",(e)=>{
     const userMsg = e.target.value
-    if(e.key==="Enter" && userMsg)
+    if(e.key==="Enter" && userMsg && !e.shiftKey) 
     {
         handleOutgoingMsg(e);
 
     }
+})
+//Adjust input filed height
+msgInput.addEventListener("input",()=>{
+    msgInput.style.height = `${initialInputHeight}px`
+     msgInput.style.height = `${msgInput.scrollHeight}px`
+     document.querySelector(".chat-form").style.borderRadius = msgInput.scrollHeight>initialInputHeight ? "15px" : "32px";
+
+
 })
 sendMsgButton.addEventListener("click",(e)=>{
     handleOutgoingMsg(e)
@@ -122,8 +144,44 @@ fileInput.addEventListener("change",()=>{
     reader.readAsDataURL(file)
    
 })
+//Handling file cnacel button
+fileCancelButton.addEventListener("click",() =>{
+    fileUploadWrapper.classList.remove("file-uploaded")
+    userData.file = {}
+})
 
 //Handling file input 
 document.querySelector("#file-upload").addEventListener("click",() => fileInput.click())
 
+//Handling emoji picker 
+// https://github.com/missive/emoji-mart -- reference
+const picker = new EmojiMart.Picker({
+    theme:"light",
+    onEmojiSelect: (emoji) => { 
+        const { selectionStart: start, selectionEnd: end } = msgInput; 
+//   emoji.native: The selected emoji (e.g., "😊").
+// setRangeText(emoji.native, start, end, "end"):
+// If no text is selected, it inserts the emoji at the cursor position.
+// If text is selected, it replaces the selected text with the emoji.
+// "end" parameter ensures the cursor moves after the emoji.
+        msgInput.setRangeText(emoji.native, start, end, "end"); 
+        msgInput.focus(); 
+        }, 
+    onClickOutside : (e) =>{
+        if(e.target.id==="emoji-picker")
+        {
+            document.body.classList.toggle("show-emoji-picker")
+        }
+        else
+        {
+            document.body.classList.remove("show-emoji-picker")
+        }
+    }
+
+})
+
+document.querySelector(".chat-form").appendChild(picker)
+chatBotToggler.addEventListener("click",()=>{
+    document.body.classList.toggle("show-chatbot")
+})
 
