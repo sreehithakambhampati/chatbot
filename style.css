@@ -50,17 +50,15 @@ body.show-chatbot #chatbot-toggler span:last-child {
 
 .chatbot-popup {
     position: fixed;
-    right: 35px;
-    bottom: 90px;
-    width: 460px;
     background-color: #fff;
     overflow: hidden;
     opacity: 0;
-    transform: scale(0.2);
+    transform: translate(-50%, -50%) scale(0.2);
     transform-origin: bottom right;
     pointer-events: none;
     border-radius: 15px;
     box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
+    
 }
 
 body.show-chatbot .chatbot-popup {
@@ -128,7 +126,6 @@ body.show-chatbot .chatbot-popup {
     padding: 6px;
     fill: #fff;
     flex-shrink: 0;
-    /* It prevents the element from shrinking when the parent container gets smaller. */
     background: #5350C4;
     align-self: flex-end;
     border-radius: 50%;
@@ -158,7 +155,7 @@ body.show-chatbot .chatbot-popup {
     border-radius: 13px 13px 3px 13px;
 }
 
-/* Input given by user */
+
 .chat-body .user-message .attachment {
     width: 50%;
     margin-top: -7px;
@@ -173,7 +170,6 @@ body.show-chatbot .chatbot-popup {
 .chat-body .bot-message .thinking-indicator {
     display: flex;
     gap: 4px;
-    /* Adds 15 pixels of padding to the top and bottom of the flex container. */
     padding-block: 15px;
 }
 
@@ -199,7 +195,7 @@ body.show-chatbot .chatbot-popup {
 
 }
 
-/* @keyframes is a CSS rule used to define animations by specifying keyframes at different points in an animation sequence. It allows you to control how an element's properties (like opacity, transform, color, etc.) change over time. */
+
 @keyframes dotPulse {
 
     0%,
@@ -252,7 +248,6 @@ body.show-chatbot .chatbot-popup {
     resize: none;
     font-size: 0.95rem;
     padding: 14px 0 13px 18px;
-    /* The border-radius: inherit; property inherits the border-radius value from its parent element. */
     border-radius: inherit;
     max-height: 180px;
     white-space: pre-line;
@@ -311,8 +306,7 @@ body.show-chatbot .chatbot-popup {
     position: relative;
 }
 
-/* :where(img, button) selects both <img> and <button> without increasing specificity.
-position: absolute; – Places the image & buttons inside the wrapper without affecting layout. */
+
 .chat-form .file-upload-wrapper :where(img, button) {
     position: absolute;
 }
@@ -331,11 +325,7 @@ position: absolute; – Places the image & buttons inside the wrapper without af
     background: #fff;
 }
 
-/* .chat-form .file-upload-wrapper :where(img,#file-cancel),
-    .chat-form .file-upload-wrapper.file-uploaded #file-upload
-    {
-        display: none;
-    } */
+
 .chat-form .file-upload-wrapper img,
 .chat-form .file-upload-wrapper #file-cancel,
 .chat-form .file-upload-wrapper.file-uploaded #file-upload {
@@ -362,7 +352,7 @@ body.show-emoji-picker em-emoji-picker {
     visibility: visible;
 }
 
-/* Responsive for mobile devices */
+
 @media (max-width: 520px) {
     #chatbot-toggler {
         right: 20px;
@@ -370,11 +360,13 @@ body.show-emoji-picker em-emoji-picker {
     }
 
     .chatbot-popup {
-        right: 0;
-        bottom: 0;
-        height: 100%;
-        border-radius: 0;
-        width: 100%;
+     position: fixed; 
+    top: 20px;          
+    left:10%;     
+    width: 80%;    
+    height: 80%;  
+    max-width: 80%;  
+    
     }
 
     .chatbot-popup .chat-header { 
@@ -394,13 +386,17 @@ body.show-emoji-picker em-emoji-picker {
         opacity: 0;
     }
 }
-@media (min-width: 521px) and (max-width: 1768px) {
+@media (min-width: 521px) and (max-width: 992px) {
     .chatbot-popup {
-        right: 20px; /* Adjust positioning */
-        bottom: 20px;
-        width: 350px; /* Set appropriate width */
-        height: 500px; /* Set height properly */
-        border-radius: 10px; /* Add rounded corners */
+        top: 5%;
+        min-width: 50%;
+        bottom: 5%;
+  left: 25%;
+  right:25%;
+ 
+  width: 50%;
+        height:90%; 
+        border-radius: 10px; 
     }
 
     .chat-body {
@@ -413,3 +409,27 @@ body.show-emoji-picker em-emoji-picker {
         padding: 10px;
     }
 }
+@media (min-width: 993px) {
+     .chatbot-popup {
+        top: 5%;
+   min-width: 20%;
+  left: 30%;
+  right:30%;
+  bottom: 5%;
+  width: 40%;
+ 
+       
+        border-radius: 10px; 
+    }
+
+    .chat-body {
+        height: calc(100% - 120px);
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .chat-footer {
+        padding: 10px;
+    }
+}
+
