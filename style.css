@@ -70,10 +70,10 @@ body.show-chatbot .chatbot-popup {
 
 .chat-header {
     display: flex;
-    align-items: center;
+  
     background: #5350C4;
     padding: 15px 22px;
-    justify-content: space-between;
+   
 }
 
 .chat-header .header-info {
@@ -88,7 +88,6 @@ body.show-chatbot .chatbot-popup {
     padding: 6px;
     fill: #5350C4;
     flex-shrink: 0;
-    /* It prevents the element from shrinking when the parent container gets smaller. */
     background: #fff;
     border-radius: 50%;
 }
@@ -242,7 +241,7 @@ body.show-chatbot .chatbot-popup {
 
 .chat-form .message-input {
     border: none;
-    outline: none;
+    outline:none;
     height: 47px;
     width: 100%;
     resize: none;
@@ -252,7 +251,6 @@ body.show-chatbot .chatbot-popup {
     max-height: 180px;
     white-space: pre-line;
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
 
 }
 

@@ -5,11 +5,11 @@ const fileInput = document.querySelector("#file-input")
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper")
 const fileCancelButton = document.querySelector("#file-cancel")
 const chatBotToggler = document.querySelector("#chatbot-toggler")
-const userData ={
-    message : null,
-    file:{
-        data : null,
-        mime_type : null
+const userData = {
+    message: null,
+    file: {
+        data: null,
+        mime_type: null
     }
 
 };
@@ -17,64 +17,62 @@ const chatHistory = []
 const initialInputHeight = msgInput.scrollHeight
 const API_KEY = "AIzaSyAvUoiN5skRhYB4_wcmuQPmjVslVQ2W2ac";
 const API_url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-const generateBotResponse = async (inComingmsgDiv) =>{
+
+const generateBotResponse = async (inComingmsgDiv) => {
     const msgElement = inComingmsgDiv.querySelector(".message-text")
-     //Adding user msg to chat history
-    chatHistory.push({ 
-        role:"user",
-        parts: [{ text: userData.message },...(userData.file.data ? [{inline_data : userData.file}]:[])] 
-   });
-    const requestOptions = { 
-        method: "POST", 
-        headers: { "Content-Type": "application/json" }, 
-        body: JSON.stringify({ 
-        contents:chatHistory
-        }) 
+
+    chatHistory.push({
+        role: "user",
+        parts: [{ text: userData.message }, ...(userData.file.data ? [{ inline_data: userData.file }] : [])]
+    });
+    const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            contents: chatHistory
+        })
     }
-    try{
-        const response = await fetch(API_url,requestOptions)
+    try {
+        const response = await fetch(API_url, requestOptions)
         const data = await response.json();
-        if(!response.ok)
+        if (!response.ok)
             throw new Error(data.err.message);
         const apiResponse = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
         msgElement.innerText = apiResponse
         //Adding bot response to chat history
-        chatHistory.push({ 
-            role:"model",
-            parts: [{ text: apiResponse}] 
-       });
+        chatHistory.push({
+            role: "model",
+            parts: [{ text: apiResponse }]
+        });
     }
-    catch(error)
-    {
-        // console.log(error.message)
+    catch (error) {
+
         msgElement.innerText = error.message
         msgElement.style.color = "#ff0000"
 
-    }finally{
-        //Reset user's file data 
+    } finally {
+
         userData.file = {}
         inComingmsgDiv.classList.remove("thinking")
-        chatBody.scrollTo({top : chatBody.scrollHeight, behavior : "smooth"})
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" })
     }
 }
-const handleOutgoingMsg=(e)=>{
+const handleOutgoingMsg = (e) => {
     e.preventDefault();
     userData.message = msgInput.value.trim();
     fileUploadWrapper.classList.remove("file-uploaded")
     msgInput.dispatchEvent(new Event("input"));
-    //clearing the text area after msg is sent
     msgInput.value = "";
     const msgContent = ` 
     <div class="message-text"></div> 
-    ${userData.file.data ? 
-        `<img src="data:${userData.file.mime_type};base64,${userData.file.data}" class="attachment" />` 
-        : ""}`;
+    ${userData.file.data ?
+            `<img src="data:${userData.file.mime_type};base64,${userData.file.data}" class="attachment" />`
+            : ""}`;
 
-    const outGoingmsgDiv = createMsgElement(msgContent,"user-message")
+    const outGoingmsgDiv = createMsgElement(msgContent, "user-message")
     outGoingmsgDiv.querySelector(".message-text").innerText = userData.message
     chatBody.append(outGoingmsgDiv)
-    //To enable automatic scrolling when new msg comes
-    chatBody.scrollTo({top : chatBody.scrollHeight, behavior : "smooth"})
+    chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" })
     setTimeout(() => {
         const msgContent = ` <svg class="bot-avatar" 
                  xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 1024 1024">
@@ -89,91 +87,82 @@ const handleOutgoingMsg=(e)=>{
                         <div class="dot"></div>
                     </div>
                 </div>`
-    const inComingmsgDiv = createMsgElement(msgContent,"bot-message","thinking")
-    chatBody.append(inComingmsgDiv)
-    chatBody.scrollTo({top : chatBody.scrollHeight, behavior : "smooth"})
-    generateBotResponse(inComingmsgDiv)
-    })
+        const inComingmsgDiv = createMsgElement(msgContent, "bot-message", "thinking")
+        chatBody.append(inComingmsgDiv)
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" })
+        generateBotResponse(inComingmsgDiv)
+    }, 600)
 
 }
-const createMsgElement =(msgContent,...classes)=>{
+const createMsgElement = (msgContent, ...classes) => {
     const div = document.createElement("div")
-    div.classList.add("message",...classes)
+    div.classList.add("message", ...classes)
     div.innerHTML = msgContent
-    return div 
+    return div
 }
-msgInput.addEventListener("keydown",(e)=>{
+msgInput.addEventListener("keydown", (e) => {
     const userMsg = e.target.value
-    if(e.key==="Enter" && userMsg && !e.shiftKey) 
-    {
+    if (e.key === "Enter" && userMsg && !e.shiftKey) {
         handleOutgoingMsg(e);
 
     }
 })
-//Adjust input filed height
-msgInput.addEventListener("input",()=>{
+msgInput.addEventListener("input", () => {
     msgInput.style.height = `${initialInputHeight}px`
-     msgInput.style.height = `${msgInput.scrollHeight}px`
-     document.querySelector(".chat-form").style.borderRadius = msgInput.scrollHeight>initialInputHeight ? "15px" : "32px";
+    msgInput.style.height = `${msgInput.scrollHeight}px`
+    document.querySelector(".chat-form").style.borderRadius = msgInput.scrollHeight > initialInputHeight ? "15px" : "32px";
 
 
 })
-sendMsgButton.addEventListener("click",(e)=>{
+sendMsgButton.addEventListener("click", (e) => {
     handleOutgoingMsg(e)
 })
-//Handle file input change
-fileInput.addEventListener("change",()=>{
+
+document.querySelector("#file-upload").addEventListener("click", () => fileInput.click());
+
+fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
-    if(!file)
+    if (!file)
         return;
-    //converting to base 64 format
+
     const reader = new FileReader()
-    reader.onload = (e) =>{
-        //Preview the selected file
+    reader.onload = (e) => {
+
         fileUploadWrapper.querySelector("img").src = e.target.result;
         fileUploadWrapper.classList.add("file-uploaded")
         const base64String = e.target.result.split(",")[1];
-        //Storing file data in userData
-        //Specifications from google ai developers
         userData.file = {
-            data : base64String,
-            mime_type : file.type
+            data: base64String,
+            mime_type: file.type
         }
         fileInput.value = "";
-    } 
+    }
     reader.readAsDataURL(file)
-   
+
 })
-//Handling file cnacel button
-fileCancelButton.addEventListener("click",() =>{
+
+fileCancelButton.addEventListener("click", () => {
     fileUploadWrapper.classList.remove("file-uploaded")
     userData.file = {}
 })
 
-//Handling file input 
-document.querySelector("#file-upload").addEventListener("click",() => fileInput.click())
 
-//Handling emoji picker 
-// https://github.com/missive/emoji-mart -- reference
+
+
+// https://github.com/missive/emoji-mart 
 const picker = new EmojiMart.Picker({
-    theme:"light",
-    onEmojiSelect: (emoji) => { 
-        const { selectionStart: start, selectionEnd: end } = msgInput; 
-//   emoji.native: The selected emoji (e.g., "😊").
-// setRangeText(emoji.native, start, end, "end"):
-// If no text is selected, it inserts the emoji at the cursor position.
-// If text is selected, it replaces the selected text with the emoji.
-// "end" parameter ensures the cursor moves after the emoji.
-        msgInput.setRangeText(emoji.native, start, end, "end"); 
-        msgInput.focus(); 
-        }, 
-    onClickOutside : (e) =>{
-        if(e.target.id==="emoji-picker")
-        {
+    theme: "light",
+    onEmojiSelect: (emoji) => {
+        const { selectionStart: start, selectionEnd: end } = msgInput;
+
+        msgInput.setRangeText(emoji.native, start, end, "end");
+        msgInput.focus();
+    },
+    onClickOutside: (e) => {
+        if (e.target.id === "emoji-picker") {
             document.body.classList.toggle("show-emoji-picker")
         }
-        else
-        {
+        else {
             document.body.classList.remove("show-emoji-picker")
         }
     }
@@ -181,7 +170,7 @@ const picker = new EmojiMart.Picker({
 })
 
 document.querySelector(".chat-form").appendChild(picker)
-chatBotToggler.addEventListener("click",()=>{
+chatBotToggler.addEventListener("click", () => {
     document.body.classList.toggle("show-chatbot")
 })
 
