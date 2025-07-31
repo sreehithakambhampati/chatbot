@@ -134,6 +134,7 @@ body.show-chatbot .chatbot-popup {
 .chat-body .user-message {
     flex-direction: column;
     align-items: flex-end;
+    word-wrap: break-word;
 }
 
 .chat-body .message .message-text {
@@ -335,6 +336,8 @@ body.show-chatbot .chatbot-popup {
     display: block;
 }
 
+
+
 em-emoji-picker {
     position: absolute;
     left: 50%;
@@ -348,6 +351,43 @@ em-emoji-picker {
 
 body.show-emoji-picker em-emoji-picker {
     visibility: visible;
+}
+
+
+
+.response-wrapper
+{
+    display: flex;
+    flex-direction: column;
+    background: #F2F2FF;
+    padding: 12px 16px;
+  max-width: 75%;
+  border-radius: 13px 13px 13px 3px;
+  position: relative;
+  margin: 10px 0;
+}
+
+.response-text
+{
+    font-size: 0.95rem;
+    word-wrap: break-word;
+}
+
+.copy-container{
+    display:flex;
+    align-self: flex-end;
+    cursor:pointer;
+     color: #5350C4;
+     font-size: 0.75rem;
+     margin-bottom: 4px; 
+      border: none;
+}
+.copy-container:hover {
+  color: #3d39ac;
+}
+
+.copy-container .material-symbols-rounded {
+  font-size: 1rem;
 }
 
 

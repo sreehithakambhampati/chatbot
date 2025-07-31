@@ -14,7 +14,7 @@ const userData = {
 
 };
 const chatHistory = []
-const initialInputHeight = msgInput.scrollHeight
+const initialInputHeight = msgInput.scrollHeight;
 const API_KEY = "AIzaSyAvUoiN5skRhYB4_wcmuQPmjVslVQ2W2ac";
 const API_url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
@@ -38,7 +38,40 @@ const generateBotResponse = async (inComingmsgDiv) => {
         if (!response.ok)
             throw new Error(data.err.message);
         const apiResponse = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
-        msgElement.innerText = apiResponse
+        // msgElement.innerText = apiResponse
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("response-wrapper");
+
+        const textDiv = document.createElement("div");
+        textDiv.classList.add("response-text");
+        textDiv.innerText = apiResponse;
+
+        const copyContainer = document.createElement("button");
+        copyContainer.classList.add("copy-container");
+
+        const iconSpan = document.createElement("span");
+        iconSpan.classList.add("material-symbols-rounded");
+        iconSpan.innerText = "content_copy";
+
+        const copyLabel = document.createElement("span");
+        copyLabel.innerText = "Copy";
+
+        copyContainer.appendChild(iconSpan);
+        copyContainer.appendChild(copyLabel);
+
+        copyContainer.addEventListener("click",()=>{
+            navigator.clipboard.writeText(apiResponse);
+            iconSpan.innerText = "check";
+            copyLabel.innerText = "Copied!";
+            setTimeout(()=>{
+                iconSpan.innerText = "content_copy";
+                copyLabel.innerText = "Copy";
+            },1000);
+        })
+
+        wrapper.appendChild(textDiv);
+        wrapper.appendChild(copyContainer);
+        msgElement.replaceWith(wrapper);
         //Adding bot response to chat history
         chatHistory.push({
             role: "model",
@@ -63,6 +96,8 @@ const handleOutgoingMsg = (e) => {
     fileUploadWrapper.classList.remove("file-uploaded")
     msgInput.dispatchEvent(new Event("input"));
     msgInput.value = "";
+    msgInput.style.height = `${initialInputHeight}px`;
+document.querySelector(".chat-form").style.borderRadius = "32px";
     const msgContent = ` 
     <div class="message-text"></div> 
     ${userData.file.data ?
@@ -108,7 +143,7 @@ msgInput.addEventListener("keydown", (e) => {
     }
 })
 msgInput.addEventListener("input", () => {
-    msgInput.style.height = `${initialInputHeight}px`
+    
     msgInput.style.height = `${msgInput.scrollHeight}px`
     document.querySelector(".chat-form").style.borderRadius = msgInput.scrollHeight > initialInputHeight ? "15px" : "32px";
 
