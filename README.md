@@ -34,7 +34,7 @@ With smooth animations, a responsive design, and easy API integration, this chat
 
 **APIs & Libraries:**
 - [Google Gemini API](https://aistudio.google.com/) — AI conversation model
-- [Emoji Mart](https://www.npmjs.com/package/emoji-mart) — Emoji picker  
+- [Emoji Mart](https://github.com/missive/emoji-mart) — Emoji picker  
 
 ---
 
