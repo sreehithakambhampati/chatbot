@@ -16,7 +16,7 @@ const userData = {
 const chatHistory = []
 const initialInputHeight = msgInput.scrollHeight;
 const API_KEY = "AIzaSyAvUoiN5skRhYB4_wcmuQPmjVslVQ2W2ac";
-const API_url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const API_url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
 const generateBotResponse = async (inComingmsgDiv) => {
     const msgElement = inComingmsgDiv.querySelector(".message-text")
