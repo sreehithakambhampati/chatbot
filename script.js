@@ -16,18 +16,27 @@ const userData = {
 const chatHistory = []
 const initialInputHeight = msgInput.scrollHeight;
 const API_KEY = "AIzaSyAvUoiN5skRhYB4_wcmuQPmjVslVQ2W2ac";
-const API_url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+
+const API_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+
+
 
 const generateBotResponse = async (inComingmsgDiv) => {
     const msgElement = inComingmsgDiv.querySelector(".message-text")
 
     chatHistory.push({
         role: "user",
-        parts: [{ text: userData.message }, ...(userData.file.data ? [{ inline_data: userData.file }] : [])]
+        parts: [
+  { text: userData.message },
+  ...(userData.file.data ? [{ inline_data: { data: userData.file.data, mime_type: userData.file.mime_type } }] : [])
+]
+
     });
     const requestOptions = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+            "x-goog-api-key": API_KEY
+        },
         body: JSON.stringify({
             contents: chatHistory
         })
